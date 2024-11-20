@@ -29,7 +29,7 @@ This project is a mini project for the ESD (Enterprise Software Development) cou
 2. **Navigate to the project directory**:
 
     ```sh
-    cd ESD-MT2024038
+    cd ESD_MiniProject
     ```
 
 3. **Configure the database**:
