@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import EmployeeForm from "./EmployeeForm";
-import DepartmentPage from "./DepartmentPage";
-import Footer from "./Footer";
+import EmployeeForm from "./service/EmployeeForm";
+import DepartmentPage from "./fetch/DepartmentPage";
+import Footer from "./misc/Footer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faBuilding, faHome } from '@fortawesome/free-solid-svg-icons';
 
-import Login from './Login';
+import Login from './service/Login';
 
 
 function App() {
@@ -31,6 +31,7 @@ function App() {
         <Router>
             <div>
                 {isLoggedIn ? (
+                    
                     <div className="App container mt-5">
                         <h1 className="display-4 font-weight-bold text-center mb-4">Employee Management System</h1>
                         <nav className="d-flex justify-content-center mb-4">
@@ -49,7 +50,7 @@ function App() {
                         </nav>
                         <hr/>
                         <div className="row justify-content-center">
-                            <div className="col-md-8">
+                            <div className="col-md-10">
                                 {content && (
                                     <div className="text-center mb-4">
                                         <h2>{content}</h2>
@@ -75,7 +76,7 @@ function App() {
                         <Footer/>
                     </div>
                 ) : (
-                    <Login onLogin={handleLogin} />
+                <Login onLogin={handleLogin} />
                 )}
             </div>
         </Router>

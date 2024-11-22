@@ -1,40 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios';
-import { useEffect } from 'react';
+import BackendStatus from "../misc/BackendStatus.js";
 
-
-function useBackendStatus() {
-    const [backendStatus, setBackendStatus] = useState("Checking...");
-
-    useEffect(() => {
-        const checkBackendStatus = async () => {
-            try {
-                const response = await axios.get('http://localhost:8081/login/status');
-                if (response.status === 200) {
-                    setBackendStatus("Online");
-                } else {
-                    setBackendStatus("Offline");
-                }
-            } catch (error) {
-                setBackendStatus("Offline");
-            }
-        };
-
-        checkBackendStatus();
-        const intervalId = setInterval(checkBackendStatus, 3000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    return backendStatus;
-}
-
-function BackendStatus() {
-    const status = useBackendStatus();
-    const statusColor = status === "Online" ? "green" : "red";
-
-    return <span style={{ color: statusColor }}>{status}</span>;
-}
 
 function Login({ onLogin }) {
     const [credentials, setCredentials] = useState({
@@ -104,7 +70,7 @@ function Login({ onLogin }) {
                         </div>
                         <button type="submit" className="btn btn-primary w-100">Login</button>
                         <div className="text-center mt-3">
-                            Backend Status: <BackendStatus />
+                            Backend Status: <BackendStatus/>
                         </div>
                     </form>
                 </div>

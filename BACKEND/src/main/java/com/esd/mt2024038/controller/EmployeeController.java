@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -32,12 +33,24 @@ public class EmployeeController {
     // Register a new employee
     @PostMapping("/register")
     public String registerEmployee(
-            @RequestParam("name") String name,
-            @RequestParam("position") String position,
+            @RequestParam("employeeIdPrefix") String employeeIdPrefix,  // Add prefix parameter
+            @RequestParam("employeeIdNumber") String employeeIdNumber,  // Add number parameter
+            @RequestParam("firstName") String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam("title") String title,
             @RequestParam("departmentId") Long departmentId,
             @RequestParam(value = "photo", required = false) MultipartFile photo
     ) {
         try {
+            // Create employee ID by combining prefix and number
+            String employeeId = employeeIdPrefix + employeeIdNumber;
+
+            // Check if the employee ID already exists
+            Optional<Employee> existingEmployee = employeeRepository.findByEmployeeId(employeeId);
+            if (existingEmployee.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee ID already exists");
+            }
+
             // Upload photo to Cloudinary if provided
             String photoUrl = null;
             if (photo != null && !photo.isEmpty()) {
@@ -47,12 +60,15 @@ public class EmployeeController {
 
             // Create new employee object
             Employee employee = new Employee();
-            employee.setName(name);
-            employee.setPosition(position);
+            employee.setEmployeeId(employeeIdPrefix, employeeIdNumber);  // Set employee ID
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);  // Optional last name
+            employee.setTitle(title);
             employee.setPhotoPath(photoUrl); // Save the photo URL in the employee
 
             // Add employee to department
             departmentService.addEmployeeToDepartment(departmentId, employee);
+
             return "Employee registered successfully!";
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Photo upload failed");
@@ -71,12 +87,31 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public Employee updateEmployee(
             @PathVariable Long id,
-            @RequestParam("name") String name,
-            @RequestParam("position") String position,
+            @RequestParam("employeeIdPrefix") String employeeIdPrefix,  // Add prefix parameter
+            @RequestParam("employeeIdNumber") String employeeIdNumber,  // Add number parameter
+            @RequestParam("firstName") String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam("title") String title,
             @RequestParam(value = "photo", required = false) MultipartFile photo
     ) {
         return employeeRepository.findById(id).map(employee -> {
             try {
+                // Combine the prefix and number to form the new employee ID
+                String employeeId = employeeIdPrefix + employeeIdNumber;
+
+                // Check if the new employee ID already exists
+                if (!employee.getEmployeeId().equals(employeeId) && employeeRepository.findByEmployeeId(employeeId).isPresent()) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee ID already exists");
+                }
+
+                // Update employee ID
+                employee.setEmployeeId(employeeIdPrefix, employeeIdNumber);
+
+                // Update other employee details
+                employee.setFirstName(firstName);
+                employee.setLastName(lastName);  // Optional last name
+                employee.setTitle(title);
+
                 // Update photo if provided
                 if (photo != null && !photo.isEmpty()) {
                     Map uploadResult = cloudinary.uploader().upload(photo.getBytes(), ObjectUtils.emptyMap());
@@ -84,9 +119,6 @@ public class EmployeeController {
                     employee.setPhotoPath(photoUrl); // Update the photo URL
                 }
 
-                // Update other employee details
-                employee.setName(name);
-                employee.setPosition(position);
                 return employeeRepository.save(employee);
             } catch (IOException e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Photo upload failed");

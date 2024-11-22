@@ -1,8 +1,6 @@
 package com.esd.mt2024038.model;
 
-import com.esd.mt2024038.model.Department;
 import jakarta.persistence.*;
-
 
 @Entity
 public class Employee {
@@ -11,13 +9,23 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String position;
-    private String photoPath;
+    @Column(nullable = false, unique = true)
+    private String employeeId;
+
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = true)
+    private String lastName;
+
+    @Column(nullable = false)
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
+    private String photoPath;
 
     // Getters and Setters
     public Long getId() {
@@ -28,28 +36,36 @@ public class Employee {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmployeeId(String employeeIdPrefix, String employeeIdNumber) {
+        this.employeeId = employeeIdPrefix + employeeIdNumber;
     }
 
-    public String getPosition() {
-        return position;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getPhotoPath() {
-        return photoPath;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Department getDepartment() {
@@ -58,5 +74,13 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 }

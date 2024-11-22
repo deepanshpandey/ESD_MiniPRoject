@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchDepartments, fetchEmployeesByDepartment, updateEmployee, deleteEmployee } from './DepartmentService';
+import { fetchDepartments, fetchEmployeesByDepartment, updateEmployee, deleteEmployee } from '../service/DepartmentService';
 
 function DepartmentPage() {
     const [departments, setDepartments] = useState([]);
@@ -26,8 +26,10 @@ function DepartmentPage() {
 
         if (departmentId) {
             try {
+               
                 const employeesData = await fetchEmployeesByDepartment(departmentId);
                 setEmployees(employeesData);
+                //console.log(employeesData);
                 setError("");
             } catch (error) {
                 setError("Failed to fetch employees.");
@@ -48,7 +50,7 @@ function DepartmentPage() {
 
             setEmployees((prevEmployees) =>
                 prevEmployees.map((emp) =>
-                    emp.id === employeeId ? { ...emp, ...updatedEmployee } : emp
+                    emp.employeeId === employeeId ? { ...emp, ...updatedEmployee } : emp
                 )
             );
 
@@ -66,7 +68,7 @@ function DepartmentPage() {
     const handleDeleteEmployee = async (employeeId) => {
         try {
             await deleteEmployee(employeeId);
-            setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.id !== employeeId));
+            setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.employeeId !== employeeId));
         } catch (error) {
             setError("Failed to delete employee.");
         }
@@ -98,24 +100,26 @@ function DepartmentPage() {
                         <thead className="table-dark">
                             <tr>
                                 <th>Photo</th>
-                                <th>Name</th>
-                                <th>Position</th>
+                                <th>Employee ID</th>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {employees.map((emp) => (
-                                <tr key={emp.id}>
+                                <tr key={emp.employeeId}>
                                     <td>
                                         {emp.photoPath ? (
                                             <img
                                                 src={emp.photoPath}
-                                                alt={emp.name}
+                                                alt={`${emp.firstName} ${emp.lastName}`}
                                                 className="img-thumbnail"
                                                 style={{
                                                     width: "50px",
                                                     height: "50px",
-                                                    borderRadius: "50%",
+                                                    borderRadius: "25%",
                                                 }}
                                                 onError={(e) => {
                                                     e.target.src = "/placeholder.png"; // Fallback image
@@ -125,10 +129,12 @@ function DepartmentPage() {
                                             "No Image"
                                         )}
                                     </td>
-                                    <td>{emp.name}</td>
-                                    <td>{emp.position}</td>
+                                    <td>{emp.employeeId}</td>
+                                    <td>{emp.title}</td>
+                                    <td>{emp.firstName}</td>
+                                    <td>{emp.lastName}</td>
                                     <td>
-                                        {editingEmployee?.id === emp.id ? (
+                                        {editingEmployee?.employeeId === emp.employeeId ? (
                                             <EditEmployeeForm
                                                 employee={editingEmployee}
                                                 onSave={handleSaveEdit}
@@ -157,14 +163,18 @@ function DepartmentPage() {
                     <p>No employees in this department.</p>
                 )}
             </div>
+            <div style={{height: "50px"}}></div>
         </div>
     );
 }
 
 function EditEmployeeForm({ employee, onSave, onCancel }) {
     const [formData, setFormData] = useState({
-        name: employee.name,
-        position: employee.position,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        title: employee.title,
+        employeeId: employee.employeeId,
+        id: employee.id,
         photo: null, // For handling new photo upload
     });
 
@@ -184,42 +194,90 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
         }));
     };
 
+    function refreshTable(){ 
+        window.location.reload(); 
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const updatedFormData = new FormData();
-        updatedFormData.append("name", formData.name);
-        updatedFormData.append("position", formData.position);
+        updatedFormData.append("firstName", formData.firstName);
+        updatedFormData.append("lastName", formData.lastName);
+        updatedFormData.append("title", formData.title);
+        updatedFormData.append("employeeIdPrefix", formData.employeeIdPrefix);
+        updatedFormData.append("employeeIdNumber", formData.employeeIdNumber);
         if (formData.photo) {
             updatedFormData.append("photo", formData.photo);
         }
 
         try {
             await onSave(employee.id, updatedFormData); // Pass the employeeId and form data to handleSaveEdit
+            refreshTable();
         } catch (err) {
+            console.log(employee.id);
             console.error("Failed to update employee:", err);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="d-inline">
+            <div className="row mb-3">
+                <div className="col-4">
+                    <label className="form-label">Employee ID:</label>
+                    <select
+                        name="employeeIdPrefix"
+                        value={formData.employeeIdPrefix}
+                        onChange={handleChange}
+                        className="form-select"
+                    >
+                        <option value="N/A">Select</option>
+                        <option value="EMP">EMP</option>
+                        <option value="FAC">FAC</option>
+                        <option value="NTS">NTS</option>
+                    </select>
+                </div>
+                <div className="col">
+                    <label className="form-label">ㅤ</label>
+                    <input
+                        type="text"
+                        name="employeeIdNumber"
+                        value={formData.employeeIdNumber}
+                        onChange={handleChange}
+                        required
+                        className="form-control"
+                        placeholder="Enter numeric part"
+                    />
+                </div>
+            </div>
             <div className="mb-3">
-                <label className="form-label">Name:</label>
+            <label className="form-label">Title:</label>
+                    <select
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="form-select"
+                    >
+                        <option value="Mr.">Mr.</option>
+                        <option value="Mrs.">Mrs.</option>
+                        <option value="">Select</option>
+                    </select>
+            </div>
+            <div className="mb-3">
+                <label className="form-label">First Name:</label>
                 <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="form-control"
                     required
                 />
             </div>
             <div className="mb-3">
-                <label className="form-label">Position:</label>
+                <label className="form-label">Last Name:</label>
                 <input
                     type="text"
-                    name="position"
-                    value={formData.position}
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     className="form-control"
                     required
@@ -236,9 +294,7 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                 />
             </div>
             <button type="submit" className="btn btn-primary me-2">Save</button>
-            <button type="button" className="btn btn-secondary me-2" onClick={onCancel}>
-                Cancel
-            </button>
+            <button type="button" className="btn btn-secondary me-2" onClick={onCancel}>Cancel</button>
         </form>
     );
 }
