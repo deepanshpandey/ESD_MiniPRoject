@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "secretlll";  // Secret key for signing JWT
+    private static final String SECRET_KEY = "Deepansh-ki-TOP-Class-Security";  // Secret key for signing JWT
 
     // Generate JWT token
     public static String generateToken(String username) {

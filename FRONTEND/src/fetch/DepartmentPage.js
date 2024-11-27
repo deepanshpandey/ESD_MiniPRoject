@@ -227,6 +227,7 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                         name="employeeIdPrefix"
                         value={formData.employeeIdPrefix}
                         onChange={handleChange}
+                        required
                         className="form-select"
                     >
                         <option value="N/A">Select</option>
@@ -248,7 +249,8 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                     />
                 </div>
             </div>
-            <div className="mb-3">
+            <div className="row mb-3">
+            <div className="col-2">
             <label className="form-label">Title:</label>
                     <select
                         name="title"
@@ -261,7 +263,7 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                         <option value="">Select</option>
                     </select>
             </div>
-            <div className="mb-3">
+            <div className="col-5">
                 <label className="form-label">First Name:</label>
                 <input
                     type="text"
@@ -272,7 +274,7 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                     required
                 />
             </div>
-            <div className="mb-3">
+            <div className="col">
                 <label className="form-label">Last Name:</label>
                 <input
                     type="text"
@@ -282,6 +284,7 @@ function EditEmployeeForm({ employee, onSave, onCancel }) {
                     className="form-control"
                     required
                 />
+            </div>
             </div>
             <div className="mb-3">
                 <label className="form-label">Photo:</label>
