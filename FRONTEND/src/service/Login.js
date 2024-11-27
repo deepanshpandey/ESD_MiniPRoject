@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import BackendStatus from "../misc/BackendStatus.js";
 
-
 function Login({ onLogin }) {
     const [credentials, setCredentials] = useState({
         username: "",
@@ -24,8 +23,25 @@ function Login({ onLogin }) {
                 },
                 body: JSON.stringify(credentials),
             });
+
             if (response.ok) {
+                // Extract the token from the response
+                const data = await response.json();
+                const token = data.token;
+
+                // Store the JWT token in localStorage
+                localStorage.setItem("jwtToken", token);
+
+                // Clear the credentials (optional)
+                setCredentials({
+                    username: "",
+                    password: "",
+                });
+
+                // Call the onLogin callback to indicate successful login
                 onLogin(true);
+
+                console.log("Login successful, token stored:", token);
             } else {
                 const errorText = await response.text();
                 setError(errorText);
@@ -70,7 +86,7 @@ function Login({ onLogin }) {
                         </div>
                         <button type="submit" className="btn btn-primary w-100">Login</button>
                         <div className="text-center mt-3">
-                            Backend Status: <BackendStatus/>
+                            Backend Status: <BackendStatus />
                         </div>
                     </form>
                 </div>

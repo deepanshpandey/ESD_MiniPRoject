@@ -1,37 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import EmployeeForm from "./service/EmployeeForm";
 import DepartmentPage from "./fetch/DepartmentPage";
 import Footer from "./misc/Footer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faBuilding, faHome } from '@fortawesome/free-solid-svg-icons';
-
 import Login from './service/Login';
 
-
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        localStorage.getItem("isLoggedIn") === "true"
-    );
+    // Check if there is a JWT token in localStorage to determine login state
+    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("jwtToken") !== null);
 
     const handleLogin = (status) => {
-        setIsLoggedIn(status);
-        localStorage.setItem("isLoggedIn", status);
+        if (status) {
+            // Store JWT token after successful login
+            const token = localStorage.getItem("jwtToken");
+            if (token) {
+                setIsLoggedIn(true);
+            }
+        } else {
+            // Remove JWT token on logout
+            localStorage.removeItem("jwtToken");
+            setIsLoggedIn(false);
+        }
     };
+
     const [content, setContent] = useState("Welcome to the IIITB EMS");
     const [paragraphs] = useState([
         { label: "Roll No", value: "MT2024038" },
         { label: "Name", value: "Deepansh Pandey" },
         { label: "Email", value: <a href="mailto:Deepansh.Pandey@iiitb.ac.in">Deepansh.Pandey@iiitb.ac.in</a> },
-        { label: "Module", value: "4.2 Employee CRUD"},
-        { label: "Description", value: "During registration ask for employee details including photograph(do not save as blob), and the department(Drop Down Selection), also check for department capacity. Assign a unique employee id. Allow modification of all details including employee id, photograph and department."}
+        { label: "Module", value: "4.2 Employee CRUD" },
+        { label: "Description", value: "During registration ask for employee details including photograph(do not save as blob), and the department(Drop Down Selection), also check for department capacity. Assign a unique employee id. Allow modification of all details including employee id, photograph and department." }
     ]);
+
+    useEffect(() => {
+        // Update the login state if JWT is still valid
+        const token = localStorage.getItem("jwtToken");
+        if (token) {
+            // You can optionally verify the token here (e.g., by checking its expiration)
+            setIsLoggedIn(true);
+        }
+    }, []);
 
     return (
         <Router>
             <div>
                 {isLoggedIn ? (
-                    
                     <div className="App container mt-5">
                         <h1 className="display-4 font-weight-bold text-center mb-4">Employee Management System</h1>
                         <nav className="d-flex justify-content-center mb-4">
@@ -45,10 +60,10 @@ function App() {
                                 <FontAwesomeIcon icon={faBuilding} /> View Employees by Department
                             </Link>
                             <button className="btn btn-danger mx-2" onClick={() => handleLogin(false)}>
-                            Logout
+                                Logout
                             </button>
                         </nav>
-                        <hr/>
+                        <hr />
                         <div className="row justify-content-center">
                             <div className="col-md-10">
                                 {content && (
@@ -73,10 +88,10 @@ function App() {
                                 </Routes>
                             </div>
                         </div>
-                        <Footer/>
+                        <Footer />
                     </div>
                 ) : (
-                <Login onLogin={handleLogin} />
+                    <Login onLogin={handleLogin} />
                 )}
             </div>
         </Router>

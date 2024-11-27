@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { registerEmployee, fetchDepartments } from './DepartmentService';
+import { fetchDepartments } from './DepartmentService';
 
 function EmployeeForm() {
     const [departments, setDepartments] = useState([]);
@@ -10,7 +10,6 @@ function EmployeeForm() {
         lastName: "",
         title: "",
         departmentId: "",
-        photo: ""
     });
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -38,26 +37,54 @@ function EmployeeForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const employeeId = formData.prefix + formData.numericPart;
+        const employeeId = formData.employeeIdPrefix + formData.employeeIdNumber;
         const payload = { ...formData, employeeId };
         const employeeData = new FormData();
-        Object.keys(payload).forEach(key => employeeData.append(key, payload[key]));
+
+        Object.keys(payload).forEach((key) => {
+            employeeData.append(key, payload[key]);
+        });
         if (selectedFile) employeeData.append("photo", selectedFile);
 
-    try {
-        await registerEmployee(employeeData);
-        alert("Employee registered successfully!");
-        // Clear the form after successful registration
-        setFormData({
-            employeeIdPrefix: "EMP",
-            employeeIdNumber: "",
-            firstName: "",
-            lastName: "",
-            title: "",
-            departmentId: "",
-            photo: ""
-        });
-            setSelectedFile(null);
+        try {
+            // Get JWT token from localStorage (assuming it's saved after login)
+            const token = localStorage.getItem('jwtToken');
+            
+            if (!token) {
+                alert('Unauthorized! Please log in first.');
+                return;
+            }
+
+            // Send the token as part of the Authorization header
+            const response = await fetch('http://localhost:8081/employees/register', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include JWT token in Authorization header
+                },
+                body: employeeData,
+            });
+
+            if (response.ok) {
+                alert("Employee registered successfully!");
+                // Clear the form after successful registration
+                setFormData({
+                    employeeIdPrefix: "EMP",
+                    employeeIdNumber: "",
+                    firstName: "",
+                    lastName: "",
+                    title: "",
+                    departmentId: "",
+                });
+                setSelectedFile(null);
+            } else {
+                const errorText = await response.text();
+                if (response.status === 401) {
+                    alert("Unauthorized! Please log in again.");
+                    // Handle logout or token refresh if necessary
+                } else {
+                    alert(`Failed to register employee: ${errorText}`);
+                }
+            }
         } catch (error) {
             console.error("Error registering employee:", error);
             alert("Failed to register employee.");
