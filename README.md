@@ -88,11 +88,11 @@ This project is a mini project for the ESD (Enterprise Software Development) cou
 
 ### Class Diagram
 
-<img src="./BACKEND/UML_Academic_ERP.png" width="600">
+<img src="./BACKEND/UML_Academic_ERP.png" width="500">
 
 ### Sequence Diagram
 
-<img src="./BACKEND/SEQUENCE_FLOW.png" width="600">
+<img src="./BACKEND/SEQUENCE_FLOW.png" width="800">
 
 <!-- ### Use Case Diagram
 
