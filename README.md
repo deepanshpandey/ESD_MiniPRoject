@@ -2,136 +2,107 @@
 
 ## Project Overview
 
-This project is a mini project for the ESD (Enterprise Software Development) course. It involves both backend and frontend development to create a complete application.
+This project is a mini project for the ESD (Enterprise Software Development) course. It involves both backend and frontend development to create a part of a bigger complete application.
 
 ## Backend Documentation
 
 ### Technologies Used
 
-- **Java**: The primary programming language used for backend development.
-
-- **Spring Boot**: A framework to build and run the backend application.
-
-- **MySQL**: The database used to store application data.
-
-- **Hibernate**: ORM tool for database operations.
-
-- **Gradle**: Dependency management and build tool.
+| Technology   | Description                                      |
+|--------------|--------------------------------------------------|
+| **Java**     | The primary programming language used for backend development. |
+| **Spring Boot** | A framework to build and run the backend application. |
+| **MySQL**    | The database used to store application data.     |
+| **Gradle**   | Dependency management and build tool.            |
+| **JWT**      | JSON Web Token for User Authentication and Validation. |
 
 ### Backend Setup Instructions
 
 1. **Clone the repository**:
-
     ```sh
     git clone git@github.com:deepanshpandey/ESD_MiniProject.git
     ```
 
 2. **Navigate to the project directory**:
-
     ```sh
     cd ESD_MiniProject
     ```
 
 3. **Configure the database**:
-
     Update the `application.properties` file with your MySQL database credentials.
 
 4. **Build the project**:
-
     ```sh
+    cd BACKEND
     ./gradlew build
     ```
 
 5. **Run the application**:
-
     ```sh
     ./gradlew bootRun
     ```
-
-### API Endpoints
-
-- **GET /api/resource**: Fetches all resources.
-
-- **POST /api/resource**: Creates a new resource.
-
-- **PUT /api/resource/{id}**: Updates an existing resource.
-
-- **DELETE /api/resource/{id}**: Deletes a resource.
-
-### Directory Structure
-
-- `src/main/java`: Contains the Java source files.
-
-- `src/main/resources`: Contains configuration files.
-
-- `src/test/java`: Contains test files.
 
 ## Frontend Documentation
 
 ### Technologies Used
 
-- **React**: The primary library used for building the user interface.
-
-- **Redux**: State management library.
-
-- **Axios**: HTTP client for making API requests.
-
-- **Bootstrap**: CSS framework for styling.
+| Technology   | Description                                      |
+|--------------|--------------------------------------------------|
+| **React**    | The primary library used for building the user interface. |
+| **Redux**    | State management library.                        |
+| **Axios**    | HTTP client for making API requests.             |
+| **Bootstrap**| CSS framework for styling.                       |
 
 ### Frontend Setup Instructions
 
 1. **Navigate to the frontend directory**:
-
     ```sh
-    cd frontend
+    cd FRONTEND
     ```
 
 2. **Install dependencies**:
-
     ```sh
     npm install
     ```
 
 3. **Start the development server**:
-
     ```sh
     npm start
     ```
 
 ### Key Components
 
-- **App.js**: The main component that includes routing.
+| Component           | Description                                                      |
+|---------------------|------------------------------------------------------------------|
+| **App.js**          | The main component that includes routing and layout.             |
+| **EmployeeForm.js** | Component to create or edit an Employee with form validation.    |
+| **HomePage.js**     | Component for the home page displaying an overview of the application. |
+| **AboutPage.js**    | Component for the about page providing information about the project. |
+| **Login.js**        | Component for user login functionality.                          |
+| **DepartmentService.js** | Middleware component serving DepartmentPage functionality. |
+| **DepartmentPage.js** | Component for Department-wise Employee display and edit functionality. |
+| **BackendStatus.js** | Component for Backend Service Status display functionality.     |
+| **Footer.js**       | The footer component that contains the footer content.           |
 
-- **Header.js**: The header component.
+## Backend UML Diagrams
 
-- **Footer.js**: The footer component.
+### Class Diagram
 
-- **ResourceList.js**: Component to display a list of resources.
+<img src="./BACKEND/UML_Academic_ERP.png" width="600">
 
-- **ResourceForm.js**: Component to create or edit a resource.
+### Sequence Diagram
 
-- **HomePage.js**: Component for the home page.
+<img src="./BACKEND/SEQUENCE_FLOW.png" width="600">
 
-- **AboutPage.js**: Component for the about page.
+<!-- ### Use Case Diagram
 
-### Redux Structure
-
-- **Actions**: Define the actions that can be dispatched.
-
-- **Reducers**: Define how the application's state changes in response to actions.
-
-- **Store**: Holds the application's state.
+![Use Case Diagram](./uml/use-case-diagram.png) -->
 
 ## Contributing
 
 1. Fork the repository.
-
 2. Create a new branch (`git checkout -b feature-branch`).
-
 3. Make your changes.
-
 4. Commit your changes (`git commit -m 'Add some feature'`).
-
 5. Push to the branch (`git push origin feature-branch`).
-
 6. Open a pull request.
