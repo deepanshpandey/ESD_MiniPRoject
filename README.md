@@ -75,10 +75,8 @@ This project is a mini project for the ESD (Enterprise Software Development) cou
 | Component           | Description                                                      |
 |---------------------|------------------------------------------------------------------|
 | **App.js**          | The main component that includes routing and layout.             |
-| **EmployeeForm.js** | Component to create or edit an Employee with form validation.    |
-| **HomePage.js**     | Component for the home page displaying an overview of the application. |
-| **AboutPage.js**    | Component for the about page providing information about the project. |
 | **Login.js**        | Component for user login functionality.                          |
+| **EmployeeForm.js** | Component to create or edit an Employee with form validation.    |
 | **DepartmentService.js** | Middleware component serving DepartmentPage functionality. |
 | **DepartmentPage.js** | Component for Department-wise Employee display and edit functionality. |
 | **BackendStatus.js** | Component for Backend Service Status display functionality.     |
