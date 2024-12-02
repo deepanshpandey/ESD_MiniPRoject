@@ -3,6 +3,7 @@ package com.esd.mt2024038.controller;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.esd.mt2024038.model.Employee;
+import com.esd.mt2024038.repository.DepartmentRepository;
 import com.esd.mt2024038.repository.EmployeeRepository;
 import com.esd.mt2024038.service.DepartmentService;
 import com.esd.mt2024038.JwtUtil;  // Ensure you have JwtUtil class to decode the JWT
@@ -30,6 +31,8 @@ public class EmployeeController {
 
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     // Utility method to validate JWT and extract username
     private String getUsernameFromJwt(String token) {
@@ -65,6 +68,7 @@ public class EmployeeController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee ID already exists");
             }
 
+
             // Upload photo to Cloudinary if provided
             String photoUrl = null;
             if (photo != null && !photo.isEmpty()) {
@@ -81,6 +85,10 @@ public class EmployeeController {
             employee.setPhotoPath(photoUrl);
 
             // Add employee to department
+            // Check if the department has capacity
+            if (departmentService.getEmployeeCountByDepartmentId(departmentId) >= departmentService.getEmployeeCapacityByDepartmentId(departmentId)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Department capacity reached");
+            }
             departmentService.addEmployeeToDepartment(departmentId, employee);
 
             return "Employee registered successfully!";

@@ -5,6 +5,7 @@ import com.esd.mt2024038.model.Employee;
 import com.esd.mt2024038.repository.DepartmentRepository;
 import com.esd.mt2024038.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,22 @@ public class DepartmentService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    public int countByDepartmentId(Long departmentId) {
+        return employeeRepository.findByDepartmentId(departmentId).size();
+    }
+
+    public int capacityByDepartmentId(Long departmentId) {
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        return department.map(Department::getCapacity).orElse(0);
+    }
+
+    public int getEmployeeCountByDepartmentId(Long departmentId) {
+        return countByDepartmentId(departmentId);
+    }
+    public int getEmployeeCapacityByDepartmentId(Long departmentId) {
+        return capacityByDepartmentId(departmentId);
+    }
 
     public Department addEmployeeToDepartment(Long departmentId, Employee employee) throws Exception {
         Optional<Department> deptOptional = departmentRepository.findById(departmentId);

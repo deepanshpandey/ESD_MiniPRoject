@@ -26,7 +26,6 @@ function DepartmentPage() {
 
         if (departmentId) {
             try {
-               
                 const employeesData = await fetchEmployeesByDepartment(departmentId);
                 setEmployees(employeesData);
                 //console.log(employeesData);
